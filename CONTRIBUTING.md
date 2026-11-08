@@ -20,9 +20,9 @@ xcodebuild build -scheme swift-store-shots -destination 'generic/platform=iOS Si
 iOS only (`press(forDuration:)` is not available on macOS), so the `xcodebuild` line is what proves
 they still build.
 
-**Verification happens here, not in CI.** The release workflow does not build or
-test — it only turns a tag into a GitHub Release. Run these commands locally and
-make sure they pass before opening a pull request.
+**Verification happens here, not in CI.** The only workflow publishes the DocC
+documentation; nothing builds or tests in CI. Run these commands locally and make
+sure they pass before opening a pull request.
 
 Documentation lives in the DocC catalog under `Sources/*/*.docc/`. Public
 declarations are documented with `///` comments, in English.
@@ -33,7 +33,7 @@ Maintainers only. The version is **computed, never chosen**:
 
 ```bash
 scripts/release.sh --dry-run   # see what version the API diff implies
-scripts/release.sh             # stamp CHANGELOG, tag, push
+scripts/release.sh             # stamp CHANGELOG, tag, push, create the GitHub Release
 ```
 
 Write what changed under `## [Unreleased]` in `CHANGELOG.md` — prose only, no

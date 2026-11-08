@@ -8,13 +8,13 @@
 #   2. compute-next-version.sh で次の版を計算
 #   3. CHANGELOG の未リリース節にその版を刻印し、空の未リリース節を上に足す
 #   4. README の install 行を major の基準点へ同期
-#   5. commit → tag → push（タグ push が CI の Release 作成を起動する）
+#   5. commit → tag → push → gh release create（CI は使わない）
 #
 # なぜローカルで走らせるか:
 #   版の計算にはシンボルグラフの抽出が要り、それは baseline と HEAD の 2 回ビルドを意味する。
 #   CI でやると macOS ランナーのキュー（実測で 10 分超）と 2 回のフルビルドが乗る。
 #   手元なら .build が温まっているので桁で速い。判定するのは機械のままなので決定論は変わらない。
-#   CI に残すのはタグから Release を作る処理だけで、ビルドもテストも走らせない。
+#   CI はドキュメントの公開だけに使い、ビルドもテストも Release も手元で回す。
 
 set -eo pipefail
 
@@ -119,4 +119,14 @@ git tag "$VERSION"
 git push --quiet origin HEAD:main
 git push --quiet origin "$VERSION"
 
-echo "✓ $NAME $VERSION を push した（CI が Release を作る）"
+# GitHub Release も手元で作る（GitHub Actions はドキュメントの公開にだけ使う）。
+# 版番号のドットをエスケープし、末尾に境界を置く（前方一致だと 1.0.1 が 1.0.17 の節に当たる）。
+ESC=$(printf '%s' "$VERSION" | sed 's/\./\\./g')
+NOTES="$(awk "/^## \\[?${ESC}\\]?([^0-9.]|\$)/{flag=1; next} /^## \\[?[0-9]/{flag=0} flag" CHANGELOG.md)"
+if [[ -n "$(echo "$NOTES" | grep -vE '^\s*$' || true)" ]]; then
+  gh release create "$VERSION" --title "$VERSION" --notes "$NOTES"
+else
+  gh release create "$VERSION" --title "$VERSION" --generate-notes
+fi
+
+echo "✓ $NAME $VERSION を push し、Release を作った"
