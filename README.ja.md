@@ -41,7 +41,7 @@ final class StoreShots: XCTestCase {
 
 ## ドキュメント
 
-[API リファレンス](https://no-problem-dev.github.io/swift-store-shots/documentation/storeshots/)
+API リファレンスは `Sources/*/*.docc/` の DocC（Xcode の Product › Build Documentation）。
 
 ## インストール
 

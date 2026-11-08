@@ -42,7 +42,7 @@ and checks the size and count of the images it collects.
 
 ## Documentation
 
-[The API reference](https://no-problem-dev.github.io/swift-store-shots/documentation/storeshots/)
+The API reference is the DocC catalog under `Sources/*/*.docc/` (Xcode › Product › Build Documentation).
 covers the environment contract, the waiting helpers and the file layout.
 
 ## Installation
